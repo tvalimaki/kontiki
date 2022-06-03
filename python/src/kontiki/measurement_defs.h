@@ -18,6 +18,7 @@ namespace hana = boost::hana;
 
 #include "camera_defs.h"
 #include "imu_defs.h"
+#include "pose_defs.h"
 
 // Add template-of-template support to hana
 // Thanks to Jason Rice!
@@ -75,10 +76,30 @@ static auto imu_measurements = hana::ap(
     imu_types
 );
 
+// Define pose measurements
+static auto pose_meas_templates = hana::tuple_t<
+    hana::template_t<TM::PosePositionMeasurement>,
+    hana::template_t<TM::PoseOrientationMeasurement>
+>;
+
+
+static auto make_pose_meas = [](auto mtype, auto ptype) {
+  using MeasType = typename decltype(mtype)::type;
+  auto mclass = MeasType();
+  return mclass(ptype);
+};
+
+static auto pose_measurements = hana::ap(
+    hana::make_tuple(make_pose_meas),
+    pose_meas_templates,
+    pose_types
+);
+
 // Final list of measurement types
 static auto measurement_types = hana::concat(
     hana::concat(camera_measurements,
-                 imu_measurements),
+                 imu_measurements,
+                 pose_measurements),
     hana::tuple_t<
         TM::PositionMeasurement,
         TM::OrientationMeasurement>

@@ -111,6 +111,7 @@ ext_modules = [
     SensorExtension('_atan_camera'),
     SensorExtension('_basic_imu'),
     SensorExtension('_constant_bias_imu'),
+    SensorExtension('_pose'),
     MeasurementExtension('_position_measurement'),
     MeasurementExtension('_orientation_measurement'),
     MeasurementExtension('_static_rscamera_measurement'),
@@ -118,6 +119,8 @@ ext_modules = [
     MeasurementExtension('_newton_rscamera_measurement'),
     MeasurementExtension('_accelerometer_measurement'),
     MeasurementExtension('_gyroscope_measurement'),
+    MeasurementExtension('_pose_position_measurement'),
+    MeasurementExtension('_pose_orientation_measurement'),
 ]
 
 here = Path(__file__).parents[0]

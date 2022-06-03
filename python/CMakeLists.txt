@@ -81,6 +81,9 @@ kontiki_add_module(kontiki.sensors._atan_camera)
 kontiki_add_module(kontiki.sensors._basic_imu)
 kontiki_add_module(kontiki.sensors._constant_bias_imu)
 
+# - Pose
+kontiki_add_module(kontiki.sensors._pose)
+
 # Structire from motion
 kontiki_add_module(kontiki.sfm)
 
@@ -95,6 +98,8 @@ kontiki_add_module(kontiki.measurements._gyroscope_measurement)
 kontiki_add_module(kontiki.measurements._static_rscamera_measurement)
 kontiki_add_module(kontiki.measurements._lifting_rscamera_measurement)
 kontiki_add_module(kontiki.measurements._newton_rscamera_measurement)
+kontiki_add_module(kontiki.measurements._pose_position_measurement)
+kontiki_add_module(kontiki.measurements._pose_orientation_measurement)
 
 # IDE helper target
 file(GLOB_RECURSE python_sources src/*.cc src/*.h)
