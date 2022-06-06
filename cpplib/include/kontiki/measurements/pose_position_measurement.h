@@ -77,7 +77,7 @@ class PosePositionMeasurement {
       auto pose = entity::Map<PoseModel, T>(&params[offset], pose_meta);
 
       Eigen::Map<Eigen::Matrix<T, 3, 1>> r(residual);
-      r = measurement.Error<TrajectoryModel, T>(trajectory, pose);
+      r = measurement.Error<TrajectoryModel, T>(pose, trajectory);
       return true;
     }
 

@@ -71,7 +71,7 @@ class PoseOrientationMeasurement {
       offset += trajectory_meta.NumParameters();
       auto pose = entity::Map<PoseModel, T>(&params[offset], pose_meta);
 
-      residual[0] = measurement.Error<TrajectoryModel, T>(trajectory, pose);
+      residual[0] = measurement.Error<TrajectoryModel, T>(pose, trajectory);
       return true;
     }
 
