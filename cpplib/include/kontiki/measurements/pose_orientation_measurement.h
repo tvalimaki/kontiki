@@ -36,6 +36,11 @@ class PoseOrientationMeasurement {
     return q_M_L;
   }
 
+  template<typename TrajectoryModel>
+  Vector3 Measure(const type::Trajectory<TrajectoryModel, double> &trajectory) const {
+    return Measure<TrajectoryModel, double>(*pose_, trajectory);
+  };
+
   template<typename TrajectoryModel, typename T>
   T Error(const type::Pose<PoseModel, T> &pose, const type::Trajectory<TrajectoryModel, T> &trajectory) const {
     Eigen::Quaternion<T> qhat = Measure<TrajectoryModel, T>(trajectory, pose);
