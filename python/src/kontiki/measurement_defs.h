@@ -15,6 +15,8 @@ namespace hana = boost::hana;
 #include <kontiki/measurements/orientation_measurement.h>
 #include <kontiki/measurements/gyroscope_measurement.h>
 #include <kontiki/measurements/accelerometer_measurement.h>
+#include <kontiki/measurements/pose_position_measurement.h>
+#include <kontiki/measurements/pose_orientation_measurement.h>
 
 #include "camera_defs.h"
 #include "imu_defs.h"
@@ -97,9 +99,10 @@ static auto pose_measurements = hana::ap(
 
 // Final list of measurement types
 static auto measurement_types = hana::concat(
-    hana::concat(camera_measurements,
-                 imu_measurements,
-                 pose_measurements),
+    hana::concat(
+        hana::concat(camera_measurements,
+                     imu_measurements),
+        pose_measurements),
     hana::tuple_t<
         TM::PositionMeasurement,
         TM::OrientationMeasurement>

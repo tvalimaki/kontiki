@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "sensors.h"
+#include <entity/paramstore/dynamic_pstore.h>
 
 namespace kontiki {
 namespace sensors {
@@ -41,8 +42,8 @@ class PoseEntity : public SensorEntity<ViewTemplate, MetaType, StoreType> {
 
 }  // namespace internal
 
-class Pose : public internal::PoseEntity<internal::BasicImuView,
-                                         internal::BasicImuMeta,
+class Pose : public internal::PoseEntity<internal::PoseView,
+                                         internal::PoseMeta,
                                          entity::DynamicParameterStore<double>> {
  public:
   static constexpr const char* CLASS_ID = "Pose";

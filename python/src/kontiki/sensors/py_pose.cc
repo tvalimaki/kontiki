@@ -3,7 +3,7 @@
 
 #include <Eigen/Dense>
 
-#include "sensors_help.h"
+#include "sensors_helper.h"
 #include "kontiki/sensors/pose.h"
 
 namespace py = pybind11;

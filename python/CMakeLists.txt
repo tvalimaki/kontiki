@@ -16,6 +16,7 @@ message("Kontiki: ${Kontiki_INCLUDE_DIRS}")
 
 # Load pybind11
 add_subdirectory(deps/pybind11)
+# find_package(pybind11 CONFIG)
 
 # Add version number to build
 if(VERSION_INFO)

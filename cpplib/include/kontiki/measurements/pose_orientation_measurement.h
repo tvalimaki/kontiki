@@ -25,7 +25,7 @@ class PoseOrientationMeasurement {
   PoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t, const Quat &q)
     : pose_(pose), t(t), q_(q) {}
   PoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t, const Eigen::Vector4d &qvec)
-    : pose_(pose), t(t), q(Eigen::Quaternion<double>(qvec(0), qvec(1), qvec(2), qvec(3))) {}
+    : pose_(pose), t(t), q_(Eigen::Quaternion<double>(qvec(0), qvec(1), qvec(2), qvec(3))) {}
 
   template<typename TrajectoryModel, typename T>
   Eigen::Quaternion<T> Measure(const type::Trajectory<TrajectoryModel, T> &trajectory,
