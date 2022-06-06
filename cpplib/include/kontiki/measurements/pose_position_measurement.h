@@ -26,8 +26,8 @@ class PosePositionMeasurement {
     : pose_(pose), t(t), p_(p) {}
 
   template<typename TrajectoryModel, typename T>
-  Eigen::Matrix<T, 3, 1> Measure(const type::Trajectory<TrajectoryModel, T> &trajectory,
-                                 const type::Pose<PoseModel, T> &pose) const {
+  Eigen::Matrix<T, 3, 1> Measure(const type::Pose<PoseModel, T> &pose,
+                                 const type::Trajectory<TrajectoryModel, T> &trajectory) const {
     int flags = trajectories::EvaluationFlags::EvalPosition | trajectories::EvaluationFlags::EvalOrientation;
     auto T_M_I = trajectory.Evaluate(T(t), flags);
 
@@ -41,8 +41,8 @@ class PosePositionMeasurement {
   }
 
   template<typename TrajectoryModel, typename T>
-  Eigen::Matrix<T, 3, 1> Error(const type::Trajectory<TrajectoryModel, T> &trajectory,
-                               const type::Pose<PoseModel, T> &pose) const {
+  Eigen::Matrix<T, 3, 1> Error(const type::Pose<PoseModel, T> &pose,
+                               const type::Trajectory<TrajectoryModel, T> &trajectory) const {
     Eigen::Matrix<T, 3, 1> p_M_L = p_.cast<T>();
     return p_M_L - Measure<TrajectoryModel, T>(trajectory, pose);
   }

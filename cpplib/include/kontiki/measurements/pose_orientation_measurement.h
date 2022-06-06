@@ -28,8 +28,8 @@ class PoseOrientationMeasurement {
     : pose_(pose), t(t), q_(Eigen::Quaternion<double>(qvec(0), qvec(1), qvec(2), qvec(3))) {}
 
   template<typename TrajectoryModel, typename T>
-  Eigen::Quaternion<T> Measure(const type::Trajectory<TrajectoryModel, T> &trajectory,
-                                 const type::Pose<PoseModel, T> &pose) const {
+  Eigen::Quaternion<T> Measure(const type::Pose<PoseModel, T> &pose,
+                               const type::Trajectory<TrajectoryModel, T> &trajectory) const {
     Eigen::Quaternion<T> q_M_I = trajectory.Orientation(T(t));
     const Eigen::Quaternion<T> q_L_I = pose.relative_orientation();
     Eigen::Quaternion<T> q_M_L = q_M_I * q_L_I.conjugate();
@@ -37,7 +37,7 @@ class PoseOrientationMeasurement {
   }
 
   template<typename TrajectoryModel, typename T>
-  T Error(const type::Trajectory<TrajectoryModel, T> &trajectory, const type::Pose<PoseModel, T> &pose) const {
+  T Error(const type::Pose<PoseModel, T> &pose, const type::Trajectory<TrajectoryModel, T> &trajectory) const {
     Eigen::Quaternion<T> qhat = Measure<TrajectoryModel, T>(trajectory, pose);
     return q_.cast<T>().angularDistance(qhat);
   }
