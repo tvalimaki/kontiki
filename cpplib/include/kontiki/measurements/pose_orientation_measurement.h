@@ -47,6 +47,11 @@ class PoseOrientationMeasurement {
     return q_.cast<T>().angularDistance(qhat);
   }
 
+  template<typename TrajectoryModel>
+  double Error(const type::Trajectory<TrajectoryModel, double> &trajectory) const {
+    return Error<TrajectoryModel, double>(*pose_, trajectory);
+  }
+
   // Measurement data
   std::shared_ptr<PoseModel> pose_;
   double t;
