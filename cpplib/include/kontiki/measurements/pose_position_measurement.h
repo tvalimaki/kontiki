@@ -49,12 +49,12 @@ class PosePositionMeasurement {
   Eigen::Matrix<T, 3, 1> Error(const type::Pose<PoseModel, T> &pose,
                                const type::Trajectory<TrajectoryModel, T> &trajectory) const {
     Eigen::Matrix<T, 3, 1> p_M_L = p_.cast<T>();
-    return p_M_L - Measure<TrajectoryModel, T>(trajectory, pose);
+    return p_M_L - Measure<TrajectoryModel, T>(pose, trajectory);
   }
 
   template<typename TrajectoryModel>
   Eigen::Matrix<double, 3, 1> Error(const type::Trajectory<TrajectoryModel, double> &trajectory) const {
-    return p_ - Measure<TrajectoryModel, double>(trajectory, *pose_);
+    return p_ - Measure<TrajectoryModel, double>(*pose_, trajectory);
   }
 
   // Measurement data
