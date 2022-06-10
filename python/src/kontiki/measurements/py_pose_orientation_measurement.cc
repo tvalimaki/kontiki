@@ -28,7 +28,7 @@ PYBIND11_MODULE(_pose_orientation_measurement, m) {
     cls.def_property_readonly("q", [](Class &self) {
                Eigen::Vector4d pyq(self.q_.w(), self.q_.x(), self.q_.y(), self.q_.z());
                return pyq;
-             })
+             });
 
     declare_measurement_common<Class>(cls);
   });  // for_each(pose_types)
