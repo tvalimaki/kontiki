@@ -1,7 +1,7 @@
 import pkgutil
 import importlib
 
-sensor_suffixes = ('Imu', 'Camera')
+sensor_suffixes = ('Imu', 'Camera', 'Pose')
 
 
 def is_sensor(name):
