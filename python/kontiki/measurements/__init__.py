@@ -56,6 +56,24 @@ class AccelerometerMeasurement(metaclass=ImuMeta):
     pass
 
 
+class PoseMeta(TemplateMeta):
+    def __call__(self, pose, *args, **kwargs):
+        key = type(pose)
+        try:
+            cls = self._registry[key]
+        except KeyError:
+            raise TypeError(f"No class declared for {type(pose)}")
+        return cls(pose, *args, **kwargs)
+
+
+class PosePositionMeasurement(metaclass=PoseMeta):
+    pass
+
+
+class PoseOrientationMeasurement(metaclass=PoseMeta):
+    pass
+
+
 # Gather all measurement implementations
 class_implementations = collections.defaultdict(list)
 for module in pkgutil.iter_modules(__path__):
