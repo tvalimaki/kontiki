@@ -25,7 +25,10 @@ PYBIND11_MODULE(_pose_orientation_measurement, m) {
     cls.def(py::init<std::shared_ptr<PoseModel>, double, const Eigen::Vector4d &>());
     cls.def_readonly("pose", &Class::pose_);
     cls.def_readonly("t", &Class::t);
-    // cls.def_readonly("p", &Class::p_);  // TODO: access q_ quaternion
+    cls.def_property_readonly("q", [](Class &self) {
+               Eigen::Vector4d pyq(self.q_.w(), self.q_.x(), self.q_.y(), self.q_.z());
+               return pyq;
+             })
 
     declare_measurement_common<Class>(cls);
   });  // for_each(pose_types)
