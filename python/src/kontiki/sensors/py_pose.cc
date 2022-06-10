@@ -16,5 +16,7 @@ PYBIND11_MODULE(_pose, m) {
   cls.doc() = R"pbdoc(Pose sensor
   )pbdoc";
 
+  cls.def(py::init<>());
+
   declare_sensors_common<Class>(cls);
 }
