@@ -32,3 +32,5 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 RUN python3 -m pip install jupyter scipy==1.5.4 pandas matplotlib
+
+CMD jupyter notebook --ip 0.0.0.0 --allow-root
