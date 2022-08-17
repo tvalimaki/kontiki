@@ -36,8 +36,9 @@ class PosePositionMeasurement {
     Eigen::Matrix<T, 3, 1> p_I_L = q_L_I.conjugate() * (-p_L_I);
 
     Eigen::Matrix<T, 3, 1> p_M_L = T_M_I->orientation * p_I_L + T_M_I->position;
+    Eigen::Matrix<T, 3, 1> XiAX = q_L_I * p_M_L + p_L_I;
 
-    return p_M_L;
+    return XiAX;
   }
 
   template<typename TrajectoryModel>
