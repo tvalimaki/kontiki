@@ -23,7 +23,7 @@ class PosePositionMeasurement {
 
  public:
   PosePositionMeasurement(std::shared_ptr<PoseModel> pose, double t, const Vector3 &p)
-    : pose_(pose), t(t), p_(p) {}
+    : pose_(pose), t(t), p_(p), loss_function_(0.5) {}
 
   template<typename TrajectoryModel, typename T>
   Eigen::Matrix<T, 3, 1> Measure(const type::Pose<PoseModel, T> &pose,
@@ -108,9 +108,12 @@ class PosePositionMeasurement {
 
     // Give residual block to estimator problem
     estimator.problem().AddResidualBlock(cost_function,
-                                         nullptr,
+                                         &loss_function_,
                                          entity::ParameterInfo<double>::ToParameterBlocks(parameter_info));
   }
+
+  // The loss function is not a pointer since the Problem does not take ownership.
+  ceres::CauchyLoss loss_function_;
 
   // TrajectoryEstimator must be a friend to access protected members
   template<template<typename> typename TrajectoryModel>
