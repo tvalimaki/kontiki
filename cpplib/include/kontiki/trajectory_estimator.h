@@ -48,7 +48,7 @@ class TrajectoryEstimator {
     options.num_threads = num_threads;
 
     options.max_num_iterations = max_iterations;
-    options.function_tolerance = 1e-8
+    options.function_tolerance = 1e-8;
 
     if (callbacks_.size() > 0) {
       for (auto &cb : callbacks_) {
