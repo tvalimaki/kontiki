@@ -74,6 +74,14 @@ class PoseOrientationMeasurement(metaclass=PoseMeta):
     pass
 
 
+class RelativePosePositionMeasurement(metaclass=PoseMeta):
+    pass
+
+
+class RelativePoseOrientationMeasurement(metaclass=PoseMeta):
+    pass
+
+
 # Gather all measurement implementations
 class_implementations = collections.defaultdict(list)
 for module in pkgutil.iter_modules(__path__):
