@@ -101,6 +101,8 @@ kontiki_add_module(kontiki.measurements._lifting_rscamera_measurement)
 kontiki_add_module(kontiki.measurements._newton_rscamera_measurement)
 kontiki_add_module(kontiki.measurements._pose_position_measurement)
 kontiki_add_module(kontiki.measurements._pose_orientation_measurement)
+kontiki_add_module(kontiki.measurements._relative_pose_position_measurement)
+kontiki_add_module(kontiki.measurements._relative_pose_orientation_measurement)
 
 # IDE helper target
 file(GLOB_RECURSE python_sources src/*.cc src/*.h)
