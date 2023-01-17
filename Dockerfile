@@ -30,11 +30,13 @@ RUN git clone --recursive https://github.com/tvalimaki/kontiki.git && \
     rm -rf kontiki
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+    apt-get install -y \
         libjpeg8-dev zlib1g-dev python3-notebook jupyter jupyter-core \
         python-ipykernel && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
-RUN python3 -m pip install --no-cache-dir scipy==1.5.4 pandas==1.1.5 matplotlib==3.3.4
+RUN python3 -m pip install --no-cache-dir \
+        scipy==1.5.4 pandas==1.1.5 matplotlib==3.3.4 numpy==1.19.5\
+        git+https://github.com/valgur/pykitti.git@int-input
 
 CMD jupyter notebook --ip 0.0.0.0 --allow-root
