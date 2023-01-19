@@ -121,6 +121,8 @@ ext_modules = [
     MeasurementExtension('_gyroscope_measurement'),
     MeasurementExtension('_pose_position_measurement'),
     MeasurementExtension('_pose_orientation_measurement'),
+    MeasurementExtension('_relative_pose_position_measurement'),
+    MeasurementExtension('_relative_pose_orientation_measurement'),
 ]
 
 here = Path(__file__).parents[0]
