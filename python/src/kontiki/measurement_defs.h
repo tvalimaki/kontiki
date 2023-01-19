@@ -17,6 +17,8 @@ namespace hana = boost::hana;
 #include <kontiki/measurements/accelerometer_measurement.h>
 #include <kontiki/measurements/pose_position_measurement.h>
 #include <kontiki/measurements/pose_orientation_measurement.h>
+#include <kontiki/measurements/relative_pose_position_measurement.h>
+#include <kontiki/measurements/relative_pose_orientation_measurement.h>
 
 #include "camera_defs.h"
 #include "imu_defs.h"
@@ -81,7 +83,9 @@ static auto imu_measurements = hana::ap(
 // Define pose measurements
 static auto pose_meas_templates = hana::tuple_t<
     hana::template_t<TM::PosePositionMeasurement>,
-    hana::template_t<TM::PoseOrientationMeasurement>
+    hana::template_t<TM::PoseOrientationMeasurement>,
+    hana::template_t<TM::RelativePosePositionMeasurement>,
+    hana::template_t<TM::RelativePoseOrientationMeasurement>
 >;
 
 
