@@ -22,12 +22,12 @@ RUN git clone https://github.com/strasdat/Sophus.git && \
     cd ../.. && \
     rm -rf Sophus
 
-RUN git clone --recursive https://github.com/tvalimaki/kontiki.git && \
-    cd kontiki/python && \
-    git checkout testing && \
-    python3 setup.py install && \
-    cd ../.. && \
-    rm -rf kontiki
+# RUN git clone --recursive https://github.com/tvalimaki/kontiki.git && \
+#     cd kontiki/python && \
+#     git checkout testing && \
+#     python3 setup.py install && \
+#     cd ../.. && \
+#     rm -rf kontiki
 
 RUN apt-get update && \
     apt-get install -y \
@@ -35,8 +35,15 @@ RUN apt-get update && \
         python-ipykernel && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
+
 RUN python3 -m pip install --no-cache-dir \
         scipy==1.5.4 pandas==1.1.5 matplotlib==3.3.4 numpy==1.19.5\
         git+https://github.com/valgur/pykitti.git@int-input
+
+COPY . /kontiki
+RUN cd kontiki/python && \
+    python3 setup.py install && \
+    cd ../.. && \
+    rm -rf kontiki
 
 CMD jupyter notebook --ip 0.0.0.0 --allow-root

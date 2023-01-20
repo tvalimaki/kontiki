@@ -30,12 +30,12 @@ class RelativePoseOrientationMeasurement {
   template<typename TrajectoryModel, typename T>
   Eigen::Quaternion<T> Measure(const type::Pose<PoseModel, T> &pose,
                                const type::Trajectory<TrajectoryModel, T> &trajectory) const {
-    Eigen::Quaternion<T> q_M_I_0 = trajectory.Orientation(T(t0));
-    Eigen::Quaternion<T> q_M_I_1 = trajectory.Orientation(T(t1));
-    Eigen::Quaternion<T> q_M_I = q_M_I_0.conjugate() * q_M_I_1;
+    Eigen::Quaternion<T> q_M_I0 = trajectory.Orientation(T(t0));
+    Eigen::Quaternion<T> q_M_I1 = trajectory.Orientation(T(t1));
+    Eigen::Quaternion<T> q_I0_I1 = q_M_I0.conjugate() * q_M_I1;
     const Eigen::Quaternion<T> q_L_I = pose.relative_orientation();
-    Eigen::Quaternion<T> q_M_L = q_L_I * q_M_I * q_L_I.conjugate();
-    return q_M_L;
+    Eigen::Quaternion<T> q_L0_L1 = q_L_I * q_I0_I1 * q_L_I.conjugate();
+    return q_L0_L1;
   }
 
   template<typename TrajectoryModel>

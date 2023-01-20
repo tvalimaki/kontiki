@@ -32,8 +32,8 @@ class PoseOrientationMeasurement {
                                const type::Trajectory<TrajectoryModel, T> &trajectory) const {
     Eigen::Quaternion<T> q_M_I = trajectory.Orientation(T(t));
     const Eigen::Quaternion<T> q_L_I = pose.relative_orientation();
-    Eigen::Quaternion<T> q_M_L = q_L_I * q_M_I * q_L_I.conjugate();
-    return q_M_L;
+    Eigen::Quaternion<T> q_W_L = q_L_I * q_M_I * q_L_I.conjugate();
+    return q_W_L;
   }
 
   template<typename TrajectoryModel>

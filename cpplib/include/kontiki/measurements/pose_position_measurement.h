@@ -35,10 +35,11 @@ class PosePositionMeasurement {
     const Eigen::Quaternion<T> q_L_I = pose.relative_orientation();
     Eigen::Matrix<T, 3, 1> p_I_L = q_L_I.conjugate() * (-p_L_I);
 
-    Eigen::Matrix<T, 3, 1> p_M_L = T_M_I->orientation * p_I_L + T_M_I->position;
-    Eigen::Matrix<T, 3, 1> XiAX = q_L_I * p_M_L + p_L_I;
+    Eigen::Quaternion<T> q_W_I = q_L_I * T_M_I->orientation;
+    Eigen::Matrix<T, 3, 1> p_W_I = q_L_I * T_M_I->position + p_L_I;
+    Eigen::Matrix<T, 3, 1> p_W_L = q_W_I * p_I_L + p_W_I;
 
-    return XiAX;
+    return p_W_L;
   }
 
   template<typename TrajectoryModel>

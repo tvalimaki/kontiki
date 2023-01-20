@@ -29,19 +29,21 @@ class RelativePosePositionMeasurement {
   Eigen::Matrix<T, 3, 1> Measure(const type::Pose<PoseModel, T> &pose,
                                  const type::Trajectory<TrajectoryModel, T> &trajectory) const {
     int flags = trajectories::EvaluationFlags::EvalPosition | trajectories::EvaluationFlags::EvalOrientation;
-    auto T_M_I_0 = trajectory.Evaluate(T(t0), flags);
-    auto T_M_I_1 = trajectory.Evaluate(T(t1), flags);
-    const Eigen::Quaternion<T> q_M_I = T_M_I_0->orientation.conjugate() * T_M_I_1->orientation;
-    const Eigen::Matrix<T, 3, 1> p_M_I = T_M_I_0->orientation.conjugate() * T_M_I_1->position + T_M_I_0->position;
+    auto T_M_I0 = trajectory.Evaluate(T(t0), flags);
+    auto T_M_I1 = trajectory.Evaluate(T(t1), flags);
+    Eigen::Quaternion<T> q_I0_I1 = T_M_I0->orientation.conjugate() * T_M_I1->orientation;
+    Eigen::Matrix<T, 3, 1> p_I0_M = T_M_I0->orientation.conjugate() * (-T_M_I0->position);
+    Eigen::Matrix<T, 3, 1> p_I0_I1 = T_M_I0->orientation.conjugate() * T_M_I1->position + p_I0_M;
 
     const Eigen::Matrix<T, 3, 1> p_L_I = pose.relative_position();
     const Eigen::Quaternion<T> q_L_I = pose.relative_orientation();
     Eigen::Matrix<T, 3, 1> p_I_L = q_L_I.conjugate() * (-p_L_I);
 
-    Eigen::Matrix<T, 3, 1> p_M_L = q_M_I * p_I_L + p_M_I;
-    Eigen::Matrix<T, 3, 1> XiAX = q_L_I * p_M_L + p_L_I;
+    Eigen::Quaternion<T> q_L0_I1 = q_L_I * q_I0_I1;
+    Eigen::Matrix<T, 3, 1> p_L0_I1 = q_L_I * p_I0_I1 + p_L_I;
+    Eigen::Matrix<T, 3, 1> p_L0_L1 = q_L0_I1 * p_I_L + p_L0_I1;
 
-    return XiAX;
+    return p_L0_L1;
   }
 
   template<typename TrajectoryModel>
