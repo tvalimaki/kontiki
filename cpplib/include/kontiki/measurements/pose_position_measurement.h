@@ -25,6 +25,9 @@ class PosePositionMeasurement {
   PosePositionMeasurement(std::shared_ptr<PoseModel> pose, double t, const Vector3 &p)
     : pose_(pose), t(t), p_(p), loss_function_(0.5) {}
 
+  PosePositionMeasurement(std::shared_ptr<PoseModel> pose, double t, const Vector3 &p, double loss)
+    : pose_(pose), t(t), p_(p), loss_function_(loss) {}
+
   template<typename TrajectoryModel, typename T>
   Eigen::Matrix<T, 3, 1> Measure(const type::Pose<PoseModel, T> &pose,
                                  const type::Trajectory<TrajectoryModel, T> &trajectory) const {

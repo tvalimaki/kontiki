@@ -23,6 +23,7 @@ PYBIND11_MODULE(_pose_position_measurement, m) {
     std::string pyclass_name = "PosePositionMeasurement_" + std::string(PoseModel::CLASS_ID);
     auto cls = py::class_<Class, std::shared_ptr<Class>>(m, pyclass_name.c_str());
     cls.def(py::init<std::shared_ptr<PoseModel>, double, const Eigen::Vector3d &>());
+    cls.def(py::init<std::shared_ptr<PoseModel>, double, const Eigen::Vector3d, double &>());
     cls.def_readonly("pose", &Class::pose_);
     cls.def_readonly("t", &Class::t);
     cls.def_readonly("p", &Class::p_);
