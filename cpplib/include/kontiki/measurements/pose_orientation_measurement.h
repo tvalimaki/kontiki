@@ -22,15 +22,20 @@ class PoseOrientationMeasurement {
   using Quat = Eigen::Quaternion<double>;
 
  public:
-  PoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t, const Quat &q)
-    : pose_(pose), t(t), q_(q), weight(1.0) {}
-  PoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t, const Eigen::Vector4d &qvec)
-    : pose_(pose), t(t), q_(Eigen::Quaternion<double>(qvec(0), qvec(1), qvec(2), qvec(3))), weight(1.0) {}
+  PoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t, const Quat &q, double loss, double weight)
+    : pose_(pose), t(t), q_(q), loss_function_(loss), weight(weight) {}
+  PoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t, const Eigen::Vector4d &qvec, double loss, double weight)
+    : pose_(pose), t(t), q_(Eigen::Quaternion<double>(qvec(0), qvec(1), qvec(2), qvec(3))), loss_function_(loss), weight(weight) {}
 
-  PoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t, const Quat &q, double weight)
-    : pose_(pose), t(t), q_(q), weight(weight) {}
-  PoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t, const Eigen::Vector4d &qvec, double weight)
-    : pose_(pose), t(t), q_(Eigen::Quaternion<double>(qvec(0), qvec(1), qvec(2), qvec(3))), weight(weight) {}
+    PoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t, const Quat &q, double loss)
+    : pose_(pose), t(t), q_(q), loss_function_(loss), weight(1.0) {}
+  PoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t, const Eigen::Vector4d &qvec, double loss)
+    : pose_(pose), t(t), q_(Eigen::Quaternion<double>(qvec(0), qvec(1), qvec(2), qvec(3))), loss_function_(loss), weight(1.0) {}
+
+  PoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t, const Quat &q)
+    : pose_(pose), t(t), q_(q), loss_function_(0.5), weight(1.0) {}
+  PoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t, const Eigen::Vector4d &qvec)
+    : pose_(pose), t(t), q_(Eigen::Quaternion<double>(qvec(0), qvec(1), qvec(2), qvec(3))), loss_function_(0.5), weight(1.0) {}
 
   template<typename TrajectoryModel, typename T>
   Eigen::Quaternion<T> Measure(const type::Pose<PoseModel, T> &pose,
@@ -108,12 +113,12 @@ class PoseOrientationMeasurement {
 
     // Give residual block to estimator problem
     estimator.problem().AddResidualBlock(cost_function,
-                                         nullptr,
+                                         &loss_function_,
                                          entity::ParameterInfo<double>::ToParameterBlocks(parameter_info));
   }
 
   // The loss function is not a pointer since the Problem does not take ownership.
-  // ceres::CauchyLoss loss_function_;
+  ceres::CauchyLoss loss_function_;
 
   // TrajectoryEstimator must be a friend to access protected members
   template<template<typename> typename TrajectoryModel>
