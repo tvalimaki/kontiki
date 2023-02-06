@@ -102,8 +102,8 @@ class RelativePoseOrientationMeasurement {
     std::vector<entity::ParameterInfo<double>> parameter_info;
 
     // Add trajectory to problem
-    estimator.AddTrajectoryForTimes({{t1, t1}}, residual->trajectory_meta, parameter_info);
-    pose_->AddToProblem(estimator.problem(), {{t1, t1}}, residual->pose_meta, parameter_info);
+    estimator.AddTrajectoryForTimes({{t0, t0},{t1, t1}}, residual->trajectory_meta, parameter_info);
+    pose_->AddToProblem(estimator.problem(), {{t0, t0},{t1, t1}}, residual->pose_meta, parameter_info);
 
 
     for (auto& pi : parameter_info) {
