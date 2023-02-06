@@ -22,8 +22,12 @@ class RelativePosePositionMeasurement {
   using Vector3 = Eigen::Matrix<double, 3, 1>;
 
  public:
+  RelativePosePositionMeasurement(std::shared_ptr<PoseModel> pose, double t0, double t1, const Vector3 &p, double loss, double weight)
+    : pose_(pose), t0(t0), t1(t1), p_(p), loss_function_(loss), weight(weight) {}
+  RelativePosePositionMeasurement(std::shared_ptr<PoseModel> pose, double t0, double t1, const Vector3 &p, double loss)
+    : pose_(pose), t0(t0), t1(t1), p_(p), loss_function_(loss), weight(1.0) {}
   RelativePosePositionMeasurement(std::shared_ptr<PoseModel> pose, double t0, double t1, const Vector3 &p)
-    : pose_(pose), t0(t0), t1(t1), p_(p), loss_function_(0.5) {}
+    : pose_(pose), t0(t0), t1(t1), p_(p), loss_function_(0.5), weight(1.0) {}
 
   template<typename TrajectoryModel, typename T>
   Eigen::Matrix<T, 3, 1> Measure(const type::Pose<PoseModel, T> &pose,
@@ -55,18 +59,19 @@ class RelativePosePositionMeasurement {
   Eigen::Matrix<T, 3, 1> Error(const type::Pose<PoseModel, T> &pose,
                                const type::Trajectory<TrajectoryModel, T> &trajectory) const {
     Eigen::Matrix<T, 3, 1> p_M_L = p_.cast<T>();
-    return p_M_L - Measure<TrajectoryModel, T>(pose, trajectory);
+    return T(weight) * (p_M_L - Measure<TrajectoryModel, T>(pose, trajectory));
   }
 
   template<typename TrajectoryModel>
   Eigen::Matrix<double, 3, 1> Error(const type::Trajectory<TrajectoryModel, double> &trajectory) const {
-    return p_ - Measure<TrajectoryModel, double>(*pose_, trajectory);
+    return Error<TrajectoryModel, double>(*pose_, trajectory);
   }
 
   // Measurement data
   std::shared_ptr<PoseModel> pose_;
   double t0;
   double t1;
+  double weight;
   Vector3 p_;
 
  protected:
@@ -101,8 +106,8 @@ class RelativePosePositionMeasurement {
     std::vector<entity::ParameterInfo<double>> parameter_info;
 
     // Add trajectory to problem
-    estimator.AddTrajectoryForTimes({{t0, t1}}, residual->trajectory_meta, parameter_info);
-    pose_->AddToProblem(estimator.problem(), {{t0, t1}}, residual->pose_meta, parameter_info);
+    estimator.AddTrajectoryForTimes({{t1, t1}}, residual->trajectory_meta, parameter_info);
+    pose_->AddToProblem(estimator.problem(), {{t1, t1}}, residual->pose_meta, parameter_info);
 
     for (auto& pi : parameter_info) {
       cost_function->AddParameterBlock(pi.size);

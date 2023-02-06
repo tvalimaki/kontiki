@@ -27,7 +27,7 @@ class PoseOrientationMeasurement {
   PoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t, const Eigen::Vector4d &qvec, double loss, double weight)
     : pose_(pose), t(t), q_(Eigen::Quaternion<double>(qvec(0), qvec(1), qvec(2), qvec(3))), loss_function_(loss), weight(weight) {}
 
-    PoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t, const Quat &q, double loss)
+  PoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t, const Quat &q, double loss)
     : pose_(pose), t(t), q_(q), loss_function_(loss), weight(1.0) {}
   PoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t, const Eigen::Vector4d &qvec, double loss)
     : pose_(pose), t(t), q_(Eigen::Quaternion<double>(qvec(0), qvec(1), qvec(2), qvec(3))), loss_function_(loss), weight(1.0) {}
