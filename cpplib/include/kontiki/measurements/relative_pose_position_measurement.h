@@ -56,14 +56,15 @@ class RelativePosePositionMeasurement {
   };
 
   template<typename TrajectoryModel, typename T>
-  Eigen::Matrix<T, 3, 1> Error(const type::Pose<PoseModel, T> &pose,
+  T Error(const type::Pose<PoseModel, T> &pose,
                                const type::Trajectory<TrajectoryModel, T> &trajectory) const {
     Eigen::Matrix<T, 3, 1> p_M_L = p_.cast<T>();
-    return T(weight) * (p_M_L - Measure<TrajectoryModel, T>(pose, trajectory));
+    Eigen::Matrix<T, 3, 1> res = p_M_L - Measure<TrajectoryModel, T>(pose, trajectory);
+    return T(weight) * res.squaredNorm();
   }
 
   template<typename TrajectoryModel>
-  Eigen::Matrix<double, 3, 1> Error(const type::Trajectory<TrajectoryModel, double> &trajectory) const {
+  double Error(const type::Trajectory<TrajectoryModel, double> &trajectory) const {
     return Error<TrajectoryModel, double>(*pose_, trajectory);
   }
 
@@ -88,8 +89,7 @@ class RelativePosePositionMeasurement {
       offset += trajectory_meta.NumParameters();
       auto pose = entity::Map<PoseModel, T>(&params[offset], pose_meta);
 
-      Eigen::Map<Eigen::Matrix<T, 3, 1>> r(residual);
-      r = measurement.Error<TrajectoryModel, T>(pose, trajectory);
+      residual[0] = measurement.Error<TrajectoryModel, T>(pose, trajectory);
       return true;
     }
 
@@ -114,7 +114,7 @@ class RelativePosePositionMeasurement {
     }
 
     // Add measurement
-    cost_function->SetNumResiduals(3);
+    cost_function->SetNumResiduals(1);
     // If we had any measurement parameters to set, this would be the place
 
     // Give residual block to estimator problem
