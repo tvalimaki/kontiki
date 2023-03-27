@@ -24,7 +24,7 @@ PYBIND11_MODULE(_relative_pose_orientation_measurement, m) {
     auto cls = py::class_<Class, std::shared_ptr<Class>>(m, pyclass_name.c_str());
     cls.def(py::init<std::shared_ptr<PoseModel>, double, double, const Eigen::Vector4d &>());
     cls.def(py::init<std::shared_ptr<PoseModel>, double, double, const Eigen::Vector4d, double &>());
-    cls.def(py::init<std::shared_ptr<PoseModel>, double, double, const Eigen::Vector4d, double, double &>());
+    cls.def(py::init<std::shared_ptr<PoseModel>, double, double, const Eigen::Vector4d, double, Eigen::Vector3d &>());
     cls.def_readonly("pose", &Class::pose_);
     cls.def_readonly("t0", &Class::t0);
     cls.def_readonly("t1", &Class::t1);

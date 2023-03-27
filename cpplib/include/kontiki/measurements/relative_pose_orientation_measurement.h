@@ -20,22 +20,23 @@ namespace measurements {
 template<typename PoseModel>
 class RelativePoseOrientationMeasurement {
   using Quat = Eigen::Quaternion<double>;
+  using Vector3 = Eigen::Matrix<double, 3, 1>;
 
  public:
-  RelativePoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t0, double t1, const Quat &q, double loss, double weight)
+  RelativePoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t0, double t1, const Quat &q, double loss, Vector3 weight)
     : pose_(pose), t0(t0), t1(t1), q_(q), loss_function_(loss), weight(weight) {}
-  RelativePoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t0, double t1, const Eigen::Vector4d &qvec, double loss, double weight)
+  RelativePoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t0, double t1, const Eigen::Vector4d &qvec, double loss, Vector3 weight)
     : pose_(pose), t0(t0), t1(t1), q_(Eigen::Quaternion<double>(qvec(0), qvec(1), qvec(2), qvec(3))), loss_function_(loss), weight(weight) {}
 
   RelativePoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t0, double t1, const Quat &q, double loss)
-    : pose_(pose), t0(t0), t1(t1), q_(q), loss_function_(loss), weight(1.0) {}
+    : pose_(pose), t0(t0), t1(t1), q_(q), loss_function_(loss), weight(Vector3::Constant(1.0)) {}
   RelativePoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t0, double t1, const Eigen::Vector4d &qvec, double loss)
-    : pose_(pose), t0(t0), t1(t1), q_(Eigen::Quaternion<double>(qvec(0), qvec(1), qvec(2), qvec(3))), loss_function_(loss), weight(1.0) {}
+    : pose_(pose), t0(t0), t1(t1), q_(Eigen::Quaternion<double>(qvec(0), qvec(1), qvec(2), qvec(3))), loss_function_(loss), weight(Vector3::Constant(1.0)) {}
 
   RelativePoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t0, double t1, const Quat &q)
-    : pose_(pose), t0(t0), t1(t1), q_(q), loss_function_(0.5), weight(1.0) {}
+    : pose_(pose), t0(t0), t1(t1), q_(q), loss_function_(0.5), weight(Vector3::Constant(1.0)) {}
   RelativePoseOrientationMeasurement(std::shared_ptr<PoseModel> pose, double t0, double t1, const Eigen::Vector4d &qvec)
-    : pose_(pose), t0(t0), t1(t1), q_(Eigen::Quaternion<double>(qvec(0), qvec(1), qvec(2), qvec(3))), loss_function_(0.5), weight(1.0) {}
+    : pose_(pose), t0(t0), t1(t1), q_(Eigen::Quaternion<double>(qvec(0), qvec(1), qvec(2), qvec(3))), loss_function_(0.5), weight(Vector3::Constant(1.0)) {}
 
   template<typename TrajectoryModel, typename T>
   Eigen::Quaternion<T> Measure(const type::Pose<PoseModel, T> &pose,
@@ -54,13 +55,17 @@ class RelativePoseOrientationMeasurement {
   };
 
   template<typename TrajectoryModel, typename T>
-  T Error(const type::Pose<PoseModel, T> &pose, const type::Trajectory<TrajectoryModel, T> &trajectory) const {
+  Eigen::Matrix<T, 3, 1> Error(const type::Pose<PoseModel, T> &pose, const type::Trajectory<TrajectoryModel, T> &trajectory) const {
     Eigen::Quaternion<T> qhat = Measure<TrajectoryModel, T>(pose, trajectory);
-    return T(weight) * q_.cast<T>().angularDistance(qhat);
+    Eigen::Quaternion<T> q = q_.cast<T>();
+    Eigen::Quaternion<T> q_diff = q.conjugate() * qhat;
+    Eigen::Matrix<T, 3, 1> euler = q_diff.toRotationMatrix().eulerAngles(2, 1, 0).reverse();
+    Eigen::Matrix<T, 3, 1> W = weight.cast<T>();
+    return W.cwiseProduct(euler);
   }
 
   template<typename TrajectoryModel>
-  double Error(const type::Trajectory<TrajectoryModel, double> &trajectory) const {
+  Eigen::Matrix<double, 3, 1> Error(const type::Trajectory<TrajectoryModel, double> &trajectory) const {
     return Error<TrajectoryModel, double>(*pose_, trajectory);
   }
 
@@ -68,7 +73,7 @@ class RelativePoseOrientationMeasurement {
   std::shared_ptr<PoseModel> pose_;
   double t0;
   double t1;
-  double weight;
+  Vector3 weight;
   Quat q_;
 
  protected:
@@ -85,7 +90,8 @@ class RelativePoseOrientationMeasurement {
       offset += trajectory_meta.NumParameters();
       auto pose = entity::Map<PoseModel, T>(&params[offset], pose_meta);
 
-      residual[0] = measurement.Error<TrajectoryModel, T>(pose, trajectory);
+      Eigen::Map<Eigen::Matrix<T, 3, 1>> r(residual);
+      r = measurement.Error<TrajectoryModel, T>(pose, trajectory);
       return true;
     }
 
@@ -111,7 +117,7 @@ class RelativePoseOrientationMeasurement {
     }
 
     // Add measurement
-    cost_function->SetNumResiduals(1);
+    cost_function->SetNumResiduals(3);
     // If we had any measurement parameters to set, this would be the place
 
     // Give residual block to estimator problem
