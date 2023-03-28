@@ -60,7 +60,7 @@ class RelativePosePositionMeasurement {
                                const type::Trajectory<TrajectoryModel, T> &trajectory) const {
     Eigen::Matrix<T, 3, 1> p_M_L = p_.cast<T>();
     Eigen::Matrix<T, 3, 1> res = p_M_L - Measure<TrajectoryModel, T>(pose, trajectory);
-    return T(weight) * res.squaredNorm();
+    return T(weight) * res.norm();
   }
 
   template<typename TrajectoryModel>
